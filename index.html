@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Aktivitas Terbaru</title>
   
-  <!-- Import font Poppins dari Google Fonts -->
+  <!-- Import font Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
@@ -35,9 +35,10 @@
 
     .card img {
       width: 100%;
-      height: auto;
-      display: block;
+      aspect-ratio: 1/1;     /* bikin thumbnail square */
+      object-fit: cover;     /* isi penuh */
       border-radius: 8px;
+      display: block;
     }
 
     .card-content {
@@ -67,7 +68,7 @@
     }
 
     .card a:hover {
-      background: linear-gradient(90deg, #FFC700, #FF8C00); /* hover gradasi */
+      background: linear-gradient(90deg, #FFC700, #FF8C00);
     }
   </style>
 </head>
