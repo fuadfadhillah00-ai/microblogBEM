@@ -3,30 +3,33 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Aktivitas Terbaru</title>
+  <title>Aktivitas Embed</title>
   
-  <!-- Import font Poppins -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    body {
-      font-family: 'Poppins', sans-serif;
+    html, body {
+      height: 100%;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       background: transparent;
+      font-family: 'Poppins', sans-serif;
       color: white;
     }
 
     .container {
       display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      justify-content: space-around;
+      flex-wrap: nowrap;
       gap: 20px;
+      padding: 10px;
+      overflow: hidden;
     }
 
     .card {
       background: rgba(0,0,0,0);
       width: 300px;
+      flex-shrink: 0;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -35,8 +38,8 @@
 
     .card img {
       width: 100%;
-      aspect-ratio: 1/1;     /* bikin thumbnail square */
-      object-fit: cover;     /* isi penuh */
+      aspect-ratio: 1/1;
+      object-fit: cover;
       border-radius: 8px;
       display: block;
     }
@@ -59,7 +62,7 @@
     .card a {
       display: inline-block;
       text-decoration: none;
-      background: linear-gradient(90deg, #FFD700, #FFA500); /* gradasi gold */
+      background: linear-gradient(90deg, #FFD700, #FFA500);
       color: white;
       padding: 8px 12px;
       border-radius: 6px;
@@ -69,6 +72,50 @@
 
     .card a:hover {
       background: linear-gradient(90deg, #FFC700, #FF8C00);
+    }
+
+    /* Responsive: untuk layar ≤ 768px */
+    @media screen and (max-width: 768px) {
+      .container {
+        gap: 10px;
+      }
+
+      .card {
+        width: 28%; /* lebih kecil supaya 3 card muat horizontal */
+      }
+
+      .card h3 {
+        font-size: 16px;
+      }
+
+      .card p {
+        font-size: 12px;
+      }
+
+      .card a {
+        font-size: 12px;
+        padding: 6px 10px;
+      }
+    }
+
+    /* Responsive untuk layar super kecil ≤ 480px (opsional) */
+    @media screen and (max-width: 480px) {
+      .card {
+        width: 30%; /* tetap 3 card horizontal */
+      }
+
+      .card h3 {
+        font-size: 14px;
+      }
+
+      .card p {
+        font-size: 11px;
+      }
+
+      .card a {
+        font-size: 11px;
+        padding: 5px 8px;
+      }
     }
   </style>
 </head>
@@ -88,14 +135,14 @@
       .then(res => res.json())
       .then(data => {
         const container = document.getElementById("container");
-        data.forEach(item => {
+        data.slice(0,3).forEach(item => {
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
             <img src="${item.GAMBAR}" alt="thumbnail">
             <div class="card-content">
               <h3>${item.JUDUL}</h3>
-              <p>${truncateText(item.CUPLIKAN, 25)}</p>
+              <p>${truncateText(item.CUPLIKAN, 20)}</p>
               <a href="${item.LINK}" target="_blank">Baca Selengkapnya</a>
             </div>
           `;
