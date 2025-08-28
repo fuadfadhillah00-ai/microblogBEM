@@ -7,28 +7,29 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
       background: #f9f9f9;
+      margin: 0;
+      padding: 20px;
     }
     h2 {
       text-align: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-    .blog-container {
+    .container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 20px;
     }
     .card {
-      background: white;
+      background: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 300px;
       overflow: hidden;
+      width: 300px;
       display: flex;
       flex-direction: column;
-      transition: transform 0.2s;
+      transition: transform 0.2s ease-in-out;
     }
     .card:hover {
       transform: translateY(-5px);
@@ -41,72 +42,59 @@
     .card-content {
       padding: 15px;
     }
-    .card-content h3 {
-      margin: 0 0 10px 0;
+    .card h3 {
+      margin: 0 0 10px;
       font-size: 18px;
       color: #333;
     }
-    .card-content p {
+    .card p {
       font-size: 14px;
-      color: #666;
-      margin-bottom: 10px;
+      color: #555;
     }
-    .card-content a {
+    .card a {
       display: inline-block;
+      margin-top: 10px;
       text-decoration: none;
-      color: white;
-      background: #0073e6;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 14px;
-      transition: background 0.2s;
+      color: #007BFF;
+      font-weight: bold;
     }
-    .card-content a:hover {
-      background: #005bb5;
+    .card a:hover {
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
   <h2>Aktivitas Terbaru</h2>
-  <div class="blog-container" id="blog"></div>
+  <div class="container" id="blog-container"></div>
 
   <script>
-    const sheetURL = "https://script.google.com/macros/s/AKfycbyGnoXl3wJF9v2xqRBq4RdSLFawypW6dsL7zyvplCRUAIfDg51rA91JuJ8XflDy-7w/exec";
+    const url = "https://script.google.com/macros/s/AKfycbyGnoXl3wJF9v2xqRBq4RdSLFawypW6dsL7zyvplCRUAIfDg51rA91JuJ8XflDy-7w/exec";
 
-    // fungsi ubah link drive menjadi direct link
-    const driveLinkToDirect = (url) => {
-      if (!url) return "";
-      const match = url.match(/[-\w]{25,}/);
-      return match ? `https://drive.google.com/uc?export=view&id=${match[0]}` : url;
-    };
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        console.log("Data JSON:", data); // cek di console
+        const container = document.getElementById("blog-container");
 
-    async function loadBlog() {
-      try {
-        const res = await fetch(sheetURL);
-        const data = await res.json();
-
-        const blogContainer = document.getElementById("blog");
-        blogContainer.innerHTML = "";
-
-        data.slice(0, 3).forEach(item => {
+        data.forEach(item => {
+          // pastikan kolom di Sheets = JUDUL, CUPLIKAN, LINK, GAMBAR
           const card = document.createElement("div");
           card.className = "card";
           card.innerHTML = `
-            <img src="${driveLinkToDirect(item.GAMBAR)}" alt="Thumbnail">
+            <img src="${item.GAMBAR}" alt="Thumbnail">
             <div class="card-content">
               <h3>${item.JUDUL}</h3>
               <p>${item.CUPLIKAN}</p>
               <a href="${item.LINK}" target="_blank">Baca selengkapnya</a>
             </div>
           `;
-          blogContainer.appendChild(card);
+          container.appendChild(card);
         });
-      } catch (e) {
-        console.error("Gagal memuat data:", e);
-      }
-    }
-
-    loadBlog();
+      })
+      .catch(err => {
+        console.error("Error fetch:", err);
+        document.getElementById("blog-container").innerHTML = "<p>Gagal memuat data.</p>";
+      });
   </script>
 </body>
 </html>
