@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
-    /* Page transparan */
     body {
       font-family: 'Poppins', sans-serif;
       margin: 0;
@@ -26,12 +25,12 @@
     }
 
     .card {
-      background: rgba(0,0,0,0); /* transparan */
+      background: rgba(0,0,0,0);
       width: 300px;
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.7); /* biar teks jelas di gambar */
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7);
     }
 
     .card img {
@@ -59,7 +58,7 @@
     .card a {
       display: inline-block;
       text-decoration: none;
-      background-color: gold;
+      background: linear-gradient(90deg, #FFD700, #FFA500); /* gradasi gold */
       color: white;
       padding: 8px 12px;
       border-radius: 6px;
@@ -68,7 +67,7 @@
     }
 
     .card a:hover {
-      background-color: #d4af37; /* shade gold */
+      background: linear-gradient(90deg, #FFC700, #FF8C00); /* hover gradasi */
     }
   </style>
 </head>
@@ -77,6 +76,12 @@
 
   <script>
     const url = "https://script.google.com/macros/s/AKfycbwDSNwcMsdPp8P8znyxkafFgpaKgWiqLrYZpVbKxgv3LfMpHa7WBtoYyYHd0QjwbQ/exec";
+
+    function truncateText(text, wordLimit) {
+      const words = text.split(' ');
+      if (words.length <= wordLimit) return text;
+      return words.slice(0, wordLimit).join(' ') + '…';
+    }
 
     fetch(url)
       .then(res => res.json())
@@ -89,7 +94,7 @@
             <img src="${item.GAMBAR}" alt="thumbnail">
             <div class="card-content">
               <h3>${item.JUDUL}</h3>
-              <p>${item.CUPLIKAN}</p>
+              <p>${truncateText(item.CUPLIKAN, 25)}</p>
               <a href="${item.LINK}" target="_blank">Baca Selengkapnya</a>
             </div>
           `;
