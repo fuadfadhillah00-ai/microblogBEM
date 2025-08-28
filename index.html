@@ -7,53 +7,53 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 0;
+      padding: 10px;
     }
     #blog-cards {
       display: flex;
-      gap: 20px;
+      gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
     }
     .card {
       width: 30%;
-      min-width: 250px;
+      min-width: 220px;
       border: 1px solid #ddd;
-      border-radius: 12px;
-      padding: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      padding: 12px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       display: flex;
       flex-direction: column;
+      background: #fff;
     }
     .card img {
       width: 100%;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
       object-fit: cover;
+      max-height: 150px;
     }
     .card h3 {
-      margin: 0 0 10px 0;
-      font-size: 18px;
+      margin: 0 0 8px 0;
+      font-size: 16px;
     }
     .card p {
-      font-size: 14px;
-      color: #444;
-      margin-bottom: 10px;
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 8px;
     }
     .card a {
       margin-top: auto;
       color: #1a73e8;
       text-decoration: none;
       font-weight: bold;
-    }
-    .card a:hover {
-      text-decoration: underline;
+      font-size: 13px;
     }
   </style>
 </head>
 <body>
 
-<h2>Postingan Terbaru</h2>
 <div id="blog-cards"></div>
 
 <script>
@@ -64,8 +64,7 @@
     const response = await fetch(url);
     const data = await response.json();
 
-    // Ambil 3 postingan terakhir
-    const latest = data.slice(-3).reverse();
+    const latest = data.slice(-3).reverse(); // ambil 3 terakhir
     const container = document.getElementById("blog-cards");
 
     latest.forEach(item => {
@@ -96,7 +95,7 @@
       container.appendChild(card);
     });
   } catch (e) {
-    document.getElementById("blog-cards").textContent = "Gagal memuat data.";
+    document.getElementById("blog-cards").textContent = "⚠️ Gagal memuat data.";
     console.error(e);
   }
 })();
