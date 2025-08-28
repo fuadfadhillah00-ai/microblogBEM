@@ -1,74 +1,106 @@
-<!-- Tempelkan kode ini via Insert → Embed → Embed Code di Google Sites -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Terbaru</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #blog-cards {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .card {
+      width: 30%;
+      min-width: 250px;
+      border: 1px solid #ddd;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      object-fit: cover;
+    }
+    .card h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+    }
+    .card p {
+      font-size: 14px;
+      color: #444;
+      margin-bottom: 10px;
+    }
+    .card a {
+      margin-top: auto;
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .card a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
 
-<div id="blog-cards-container" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;"></div>
+<h2>Postingan Terbaru</h2>
+<div id="blog-cards"></div>
 
 <script>
-(async function() {
-  const csvUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTdEO3PL-f305V0eTt3jn5aH0HkzsOm5qJZhgW2pzfiPjAOrCNyYPe3r3ffmDW0LKQNyXq6mdDn4BXI/pub?gid=0&single=true&output=csv";
-  
+(async function(){
+  const url = "https://script.google.com/macros/s/AKfycbymPy6f9zhX-2xIenVjBN7Gdg6xn0k71bKn0qmD5qh1agRcyWe88mhV213E_c9aH98/exec";
+
   try {
-    const response = await fetch(csvUrl);
-    if (!response.ok) {
-      throw new Error("Gagal mengambil data: HTTP " + response.status);
-    }
-    const text = await response.text();
-    const rows = text.trim().split("\n").map(r => r.split(","));
-    
-    const header = rows[0];
-    const idxTitle = header.indexOf("Judul");
-    const idxSnippet = header.indexOf("Cuplikan");
-    const idxLink = header.indexOf("Link");
-    const idxImage = header.indexOf("Gambar");
-    
-    if (idxTitle < 0 || idxSnippet < 0 || idxLink < 0) {
-      console.error("Kolom 'Judul', 'Cuplikan', atau 'Link' tidak ditemukan.");
-      return;
-    }
-    
-    const items = rows.slice(1).map(c => ({
-      title: c[idxTitle],
-      snippet: c[idxSnippet],
-      link: c[idxLink],
-      image: idxImage >= 0 ? c[idxImage] : null
-    }));
-    
-    const latest = items.slice(-3).reverse();
-    const container = document.getElementById("blog-cards-container");
-    
+    const response = await fetch(url);
+    const data = await response.json();
+
+    // Ambil 3 postingan terakhir
+    const latest = data.slice(-3).reverse();
+    const container = document.getElementById("blog-cards");
+
     latest.forEach(item => {
       const card = document.createElement("div");
-      card.style = "width: 30%; min-width: 200px; border: 1px solid #ddd; border-radius: 10px; padding: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); display: flex; flex-direction: column;";
-      
-      if (item.image) {
+      card.className = "card";
+
+      if (item.Gambar) {
         const img = document.createElement("img");
-        img.src = item.image;
-        img.alt = item.title;
-        img.style = "width:100%; height:auto; border-radius: 10px; object-fit: cover; margin-bottom:10px;";
+        img.src = item.Gambar;
+        img.alt = item.Judul;
         card.appendChild(img);
       }
-      
+
       const h3 = document.createElement("h3");
-      h3.textContent = item.title;
+      h3.textContent = item.Judul;
       card.appendChild(h3);
-      
+
       const p = document.createElement("p");
-      p.textContent = item.snippet;
+      p.textContent = item.Cuplikan;
       card.appendChild(p);
-      
+
       const a = document.createElement("a");
-      a.href = item.link;
-      a.textContent = "Baca Selengkapnya";
+      a.href = item.Link;
+      a.textContent = "Baca Selengkapnya →";
       a.target = "_blank";
-      a.style = "margin-top: auto; color: #1a73e8; text-decoration: none;";
       card.appendChild(a);
-      
+
       container.appendChild(card);
     });
-    
-  } catch (error) {
-    console.error("Error:", error);
-    const c = document.getElementById("blog-cards-container");
-    c.textContent = "Gagal memuat posting terbaru.";
+  } catch (e) {
+    document.getElementById("blog-cards").textContent = "Gagal memuat data.";
+    console.error(e);
   }
 })();
 </script>
+
+</body>
+</html>
