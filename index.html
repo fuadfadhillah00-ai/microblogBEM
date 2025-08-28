@@ -3,103 +3,117 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog Terbaru</title>
+  <title>Blog dari Google Sheets</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 10px;
+      padding: 20px;
+      background: #f9f9f9;
     }
-    #blog-cards {
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .blog-container {
       display: flex;
-      gap: 15px;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 20px;
     }
-    .card {
-      width: 30%;
-      min-width: 220px;
-      border: 1px solid #ddd;
-      border-radius: 10px;
-      padding: 12px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    .blog-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      width: 300px;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
-      background: #fff;
+      transition: transform 0.2s ease;
     }
-    .card img {
+    .blog-card:hover {
+      transform: translateY(-5px);
+    }
+    .blog-card img {
       width: 100%;
-      border-radius: 8px;
-      margin-bottom: 8px;
+      height: 180px;
       object-fit: cover;
-      max-height: 150px;
     }
-    .card h3 {
-      margin: 0 0 8px 0;
-      font-size: 16px;
+    .blog-content {
+      padding: 15px;
     }
-    .card p {
-      font-size: 13px;
-      color: #555;
-      margin-bottom: 8px;
-    }
-    .card a {
-      margin-top: auto;
-      color: #1a73e8;
-      text-decoration: none;
+    .blog-title {
+      font-size: 18px;
       font-weight: bold;
-      font-size: 13px;
+      margin: 0 0 10px;
+    }
+    .blog-snippet {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 15px;
+    }
+    .blog-link {
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      background: #0073e6;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+    .blog-link:hover {
+      background: #005bb5;
     }
   </style>
 </head>
 <body>
+  <h2>Postingan Terbaru</h2>
+  <div class="blog-container" id="blog-container">
+    <p>Memuat postingan...</p>
+  </div>
 
-<div id="blog-cards"></div>
+  <script>
+    async function loadBlogs() {
+      const container = document.getElementById("blog-container");
+      container.innerHTML = "<p>Sedang memuat data...</p>";
+      
+      try {
+        const res = await fetch("https://script.google.com/macros/s/AKfycbxLfh86oREld9L4YhE77p1tFfdp8ohkQXDNvki6NPdR0v4kRq_bXuYlAZxun67y3rc/exec");
+        const data = await res.json();
 
-<script>
-(async function(){
-  const url = "https://script.google.com/macros/s/AKfycbymPy6f9zhX-2xIenVjBN7Gdg6xn0k71bKn0qmD5qh1agRcyWe88mhV213E_c9aH98/exec";
+        container.innerHTML = "";
 
-  try {
-    const response = await fetch(url);
-    const data = await response.json();
+        data.slice(0, 3).forEach(item => {
+          // konversi link gdrive menjadi direct link
+          let imgUrl = item.GAMBAR;
+          if (imgUrl.includes("drive.google.com")) {
+            const fileId = imgUrl.match(/[-\w]{25,}/);
+            if (fileId) {
+              imgUrl = `https://drive.google.com/uc?export=view&id=${fileId[0]}`;
+            }
+          }
 
-    const latest = data.slice(-3).reverse(); // ambil 3 terakhir
-    const container = document.getElementById("blog-cards");
+          const card = document.createElement("div");
+          card.className = "blog-card";
+          card.innerHTML = `
+            <img src="${imgUrl}" alt="${item.JUDUL}">
+            <div class="blog-content">
+              <h3 class="blog-title">${item.JUDUL}</h3>
+              <p class="blog-snippet">${item.CUPLIKAN}</p>
+              <a href="${item.LINK}" target="_blank" class="blog-link">Baca Selengkapnya</a>
+            </div>
+          `;
+          container.appendChild(card);
+        });
 
-    latest.forEach(item => {
-      const card = document.createElement("div");
-      card.className = "card";
-
-      if (item.Gambar) {
-        const img = document.createElement("img");
-        img.src = item.Gambar;
-        img.alt = item.Judul;
-        card.appendChild(img);
+      } catch (err) {
+        console.error(err);
+        container.innerHTML = "<p>Gagal memuat data.</p>";
       }
+    }
 
-      const h3 = document.createElement("h3");
-      h3.textContent = item.Judul;
-      card.appendChild(h3);
-
-      const p = document.createElement("p");
-      p.textContent = item.Cuplikan;
-      card.appendChild(p);
-
-      const a = document.createElement("a");
-      a.href = item.Link;
-      a.textContent = "Baca Selengkapnya →";
-      a.target = "_blank";
-      card.appendChild(a);
-
-      container.appendChild(card);
-    });
-  } catch (e) {
-    document.getElementById("blog-cards").textContent = "⚠️ Gagal memuat data.";
-    console.error(e);
-  }
-})();
-</script>
-
+    loadBlogs();
+  </script>
 </body>
 </html>
